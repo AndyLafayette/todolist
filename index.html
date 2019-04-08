@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <link rel="stylesheet" href="style.css">
+<head>
+
+    <title>My todo List</title>
+
+</head>
+<body>
+
+   <div id="app">
+	<div>
+		<h1>Todos</h1>
+		  <div>
+			<input type="text" placeholder="New Todo" aria-label="Full name" v-model="newTodo"
+				   @keypress.enter="addTodo()">
+			<button type="button"  @click="addTodo()">
+			  Add
+			</button>
+			<button type="button" @click="cancelTodo()">
+			  Cancel
+			</button>
+		  </div>
+		<template v-if="todos.length == 0">
+			<h3>No Todos</h3>
+		</template>
+		<template v-else>
+			<div v-for="(todo, index) in filteredTodos" 
+			    :key="index"
+			    :class="{ completed: todo.completed, editing: todo == editedTodo }">
+				<div v-bind:id = "index" style="display:block">
+					<input class="toggle" type="checkbox" v-model="todo.completed">
+                    <label @dblclick="editTodo(todo, index)">{{ todo.val }}</label>
+				    <button type="button" @click="removeTodo(index)">Delete</button>
+			    </div>
+				<input v-bind:id = "index + '_input'" style="display:none" class="edit" type="text"
+          			    v-model="editedTodo"
+          				@blur="doneEdit(todo, index)"
+          				@keyup.enter="doneEdit(todo, index)"
+          				@keyup.esc="cancelEdit(todo, index)">
+			</div>
+			<button @click="clearAll()">
+				Clear All
+			</button>
+		</template>
+	</div>
+	<footer class="footer" v-show="todos.length" style = "display:none">
+	<ul class="filters">
+      <li><a href="#/all" :class="{ selected: visibility == 'all' }">All</a></li>
+      <li><a href="#/active" :class="{ selected: visibility == 'active' }">Active</a></li>
+      <li><a href="#/completed" :class="{ selected: visibility == 'completed' }">Completed</a></li>
+    </ul>
+    </footer>
+</div>
+    </div>
+
+<!-- jQuery first, then Popper.js, then Bootstrap JS. -->
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script type="text/javascript">
+	// visibility filters
+	var filters = {
+    	all: function (todos) {
+        	return todos
+    	},
+    	active: function (todos) {
+        	return todos.filter(function (todo) {
+            return !todo.completed
+            })
+    	},
+        completed: function (todos) {
+        	return todos.filter(function (todo) {
+            return todo.completed
+            })
+        }
+    }
+
+	let app = new Vue({
+		el: '#app',
+		data: {
+			newTodo: '',
+			todos: [],
+			editedTodo: null,
+			visibility: 'all'
+		},
+		computed: {
+            filteredTodos: function () {
+                return filters[this.visibility](this.todos)
+            }
+        }, 
+		methods: {
+			addTodo () {
+				if(!this.newTodo.trim()) {
+					return 
+				}
+				this.todos.push({
+					val: this.newTodo,
+					completed: false
+			    })
+				this.newTodo = ''
+			},
+			cancelTodo () {
+				this.newTodo = ''
+			},
+			removeTodo (index) {
+				this.todos.splice(index, 1)
+			},
+			clearAll () {
+				this.todos = []
+			},
+			editTodo (todo, index){
+				document.getElementById(index).style.display = "none"
+				document.getElementById(index+"_input").style.display = "block"
+				this.beforeEditCache = todo.val
+                this.editedTodo = todo
+			},
+			doneEdit(todo, index){
+				document.getElementById(index).style.display = "block"
+				document.getElementById(index+"_input").style.display = "none"
+                if(this.editedTodo){
+                	this.todos[index] = this.editedTodo
+                	this.editedTodo = null
+     	 				todo = todo.trim()
+      					if (!todo) {
+        					this.removeTodo(index)
+      					}
+                }
+                else{
+                	return 
+                }
+			},
+			cancelEdit(todo, index){
+				document.getElementById(index).style.display = "block";
+				document.getElementById(index+"_input").style.display = "none";
+				this.editedTodo = null
+                todo = this.beforeEditCache 
+			}
+		}
+    })
+
+    // handle routing
+    function onHashChange () {
+        var visibility = window.location.hash.replace(/#\/?/, '')
+            if (filters[visibility]) {
+                app.visibility = visibility
+            } else {
+                window.location.hash = ''
+                app.visibility = 'all'
+            }
+    }
+
+    window.addEventListener('hashchange', onHashChange)
+    onHashChange()
+</script>
+</body>
+
+</html>
