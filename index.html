@@ -3,6 +3,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin=anonymous">
     <link rel="stylesheet" href="style.css">
 <head>
 
@@ -13,52 +14,72 @@
 
    <div id="app">
 	<div>
-		<h1>Todos</h1>
-		  <div>
-			<input type="text" placeholder="New Todo" aria-label="Full name" v-model="newTodo"
+		<div class = "container">
+		<div class = "row justify-content-center">
+		    <h3 class = "col-2 title">Todos</h3>
+	    </div>
+
+		  <div class = "row justify-content-center">
+			<input class = "col-4" type="text" placeholder="New Todo" aria-label="Full name" v-model="newTodo"
 				   @keypress.enter="addTodo()">
-			<button type="button"  @click="addTodo()">
+			<button class = "col-2" type="button"  @click="addTodo()">
 			  Add
 			</button>
-			<button type="button" @click="cancelTodo()">
+			<button class = "col-2" type="button" @click="cancelTodo()">
 			  Cancel
 			</button>
 		  </div>
+
 		<template v-if="todos.length == 0">
-			<h3>No Todos</h3>
+			<div class = "row justify-content-center">
+			<h3 class = "col-2">No Todos</h3>
+		    </div>
 		</template>
 		<template v-else>
 			<div v-for="(todo, index) in filteredTodos" 
-			    :key="index"
-			    :class="{ completed: todo.completed, editing: todo == editedTodo }">
-				<div v-bind:id = "index" style="display:block">
-					<input class="toggle" type="checkbox" v-model="todo.completed">
-                    <label @dblclick="editTodo(todo, index)">{{ todo.val }}</label>
-				    <button type="button" @click="removeTodo(index)">Delete</button>
+			    :key="index">
+			    <div class = "row justify-content-center">
+				<div class = "col-10" v-bind:id = "index" style="display:block">
+					<input class="col-4 toggle" type="checkbox" v-model="todo.completed">
+                    <label class="col-4" @dblclick="editTodo(todo, index)">{{ todo.val }}</label>
+				    <button class = "col-2" type="button" @click="removeTodo(index)">Delete</button>
 			    </div>
-				<input v-bind:id = "index + '_input'" style="display:none" class="edit" type="text"
-          			    v-model="editedTodo"
+			    </div>
+			    <div class = "row justify-content-center">
+				<input class = "col-8" v-bind:id = "index + '_input'" style="display:none" class="edit" type="text"
+          			    v-model="todo.val"
           				@blur="doneEdit(todo, index)"
           				@keyup.enter="doneEdit(todo, index)"
           				@keyup.esc="cancelEdit(todo, index)">
+          	    </div>
 			</div>
-			<button @click="clearAll()">
+
+			<div class = "row justify-content-center">
+			<button class="col-4" @click="clearAll()">
 				Clear All
 			</button>
+		    </div>
+
 		</template>
-	</div>
+
 	<footer class="footer" v-show="todos.length" style = "display:none">
-	<ul class="filters">
-      <li><a href="#/all" :class="{ selected: visibility == 'all' }">All</a></li>
-      <li><a href="#/active" :class="{ selected: visibility == 'active' }">Active</a></li>
-      <li><a href="#/completed" :class="{ selected: visibility == 'completed' }">Completed</a></li>
-    </ul>
-    </footer>
-</div>
+	<div class="row justify-content-center">
+	<div class="col-4 filters">
+      <a class = "col-2" href="#/all" :class="{ selected: visibility == 'all' }">All</a>
+      <a class = "col-1" href="#/active" :class="{ selected: visibility == 'active' }">Active</a>
+      <a class = "col-1" href="#/completed" :class="{ selected: visibility == 'completed' }">Completed</a>
     </div>
+    </div>
+    </footer>
+    </div>
+    </div>
+</div>
 
 <!-- jQuery first, then Popper.js, then Bootstrap JS. -->
 <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
 <script type="text/javascript">
 	// visibility filters
 	var filters = {
